@@ -58,6 +58,41 @@
             color: #667eea;
             font-weight: bold;
         }
+        .question-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        .q-btn {
+            padding: 15px;
+            background: #f0f4ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #667eea;
+            transition: 0.3s;
+        }
+        .q-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        .q-btn.answered-correct {
+            background: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+        .q-btn.answered-wrong {
+            background: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+        .q-btn.current {
+            background: #667eea;
+            color: white;
+            transform: scale(1.1);
+        }
         .question-box {
             background: #f8f9ff;
             padding: 25px;
@@ -113,6 +148,13 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
+        .btn-next {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            margin-top: 15px;
+        }
+        .btn-next:hover {
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
         .result {
             margin-top: 25px;
             padding: 25px;
@@ -149,16 +191,21 @@
             font-weight: bold;
             color: #667eea;
             margin-bottom: 10px;
+            font-size: 16px;
         }
         .explanation-sv {
             color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #ccc;
         }
         .explanation-ur {
             color: #555;
-            font-style: italic;
-            border-top: 1px dashed #ccc;
-            padding-top: 10px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .explanation-ur strong {
+            color: #667eea;
         }
         .score-box {
             background: #f8f9ff;
@@ -175,40 +222,13 @@
         .hidden {
             display: none;
         }
-        .question-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+        .nav-buttons {
+            display: flex;
             gap: 10px;
-            margin-bottom: 25px;
+            margin-top: 15px;
         }
-        .q-btn {
-            padding: 15px;
-            background: #f0f4ff;
-            border: 2px solid #667eea;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #667eea;
-            transition: 0.3s;
-        }
-        .q-btn:hover {
-            background: #667eea;
-            color: white;
-        }
-        .q-btn.answered-correct {
-            background: #28a745;
-            border-color: #28a745;
-            color: white;
-        }
-        .q-btn.answered-wrong {
-            background: #dc3545;
-            border-color: #dc3545;
-            color: white;
-        }
-        .q-btn.current {
-            background: #667eea;
-            color: white;
-            transform: scale(1.1);
+        .btn-nav {
+            flex: 1;
         }
     </style>
 </head>
@@ -237,6 +257,11 @@
 
         <div class="result hidden" id="result"></div>
 
+        <div class="nav-buttons hidden" id="navButtons">
+            <button class="btn btn-nav" onclick="prevQuestion()">← Pichla</button>
+            <button class="btn btn-nav btn-next" onclick="nextQuestion()">Agla →</button>
+        </div>
+
         <div class="score-box hidden" id="scoreBox">
             <div class="score-number" id="scoreNumber">0/20</div>
             <div>Rätta svar</div>
@@ -252,7 +277,7 @@
                 options: ["1.0 mm", "1.6 mm", "2.0 mm", "3.0 mm"],
                 correct: 1,
                 explanation: "I Sverige är det minsta tillåtna mönsterdjupet för sommardäck 1,6 mm.",
-                explanationUrdu: "Sweden mein summer tyres ki minimum legal depth 1.6 mm hoti hai."
+                explanationUrdu: "<strong>Sweden mein summer tyres ki minimum legal depth 1.6 mm hoti hai.</strong><br><br><strong>Kyun important hai?</strong><br>Agar tyre depth 1.6 mm se kam ho jaye to tyre barish ya geeli sadkon par pakad nahi kar pata aur car slip ho sakti hai. Isliye Sweden mein yeh law hai ke summer tyres kam az kam 1.6 mm deep hon."
             },
             {
                 question: "Vad är den minsta tillåtna mönsterdjupet för vinterdäck i Sverige?",
@@ -260,7 +285,7 @@
                 options: ["1.6 mm", "2.0 mm", "3.0 mm", "4.0 mm"],
                 correct: 2,
                 explanation: "I Sverige är det minsta tillåtna mönsterdjupet för vinterdäck 3,0 mm.",
-                explanationUrdu: "Sweden mein winter tyres ki minimum legal depth 3.0 mm hoti hai."
+                explanationUrdu: "<strong>Sweden mein winter tyres ki minimum legal depth 3.0 mm hoti hai.</strong><br><br><strong>Kyun zyada depth?</strong><br>Winter tyres ko barf aur snow mein chalna hota hai. Zyada depth (3.0 mm) tyre ko barf mein behtar grip deti hai. Agar depth kam ho to barf par control mushkil ho jata hai aur accident ka khatra barh jata hai."
             },
             {
                 question: "När ska den gula skyltlampan (skolbuss/skolzon) tändas?",
@@ -273,7 +298,7 @@
                 ],
                 correct: 1,
                 explanation: "Den gula skyltlampan ska tändas 100 meter före skolan och släckas 100 meter efter.",
-                explanationUrdu: "Yellow light school se 100 meter pehle on karni hai aur 100 meter baad off karni hai."
+                explanationUrdu: "<strong>Yellow light school se 100 meter pehle on karni hai aur 100 meter baad off karni hai.</strong><br><br><strong>Kyun?</strong><br>Yeh light doosre drivers ko alert karti hai ke yahan school zone hai aur bachon ka aana-jana hai. 100 meter pehle on karne se doosre drivers ko time milta hai ke woh speed kam karen aur zyada alert ho jayen."
             },
             {
                 question: "Hur kontrollerar du att bilbältet fungerar korrekt?",
@@ -286,7 +311,7 @@
                 ],
                 correct: 1,
                 explanation: "Du kontrollerar bilbältet genom att ge det en snabb ryckning – det ska låsa sig.",
-                explanationUrdu: "Seatbelt ko tez jhatka dekar check karte hain - agar lock ho jaye to seatbelt sahi hai."
+                explanationUrdu: "<strong>Seatbelt ko tez jhatka dekar check karte hain - agar lock ho jaye to seatbelt sahi hai.</strong><br><br><strong>Kaise karen?</strong><br>Seatbelt ko pakad kar tez jhatka den. Agar seatbelt turant lock ho jaye (yani ruk jaye), to iska matlab seatbelt sahi kaam kar rahi hai. Slow pull mein seatbelt smoothly nikalna chahiye, lekin tez jhatka mein lock hona chahiye."
             },
             {
                 question: "Var ska ett barn under 135 cm sitta i bilen för maximal säkerhet?",
@@ -299,7 +324,7 @@
                 ],
                 correct: 2,
                 explanation: "Barn under 135 cm ska sitta bakåt i baksätet för maximal säkerhet.",
-                explanationUrdu: "135 cm se kam height wale bachon ko peeche ki seat par baithana chahiye for maximum safety."
+                explanationUrdu: "<strong>135 cm se kam height wale bachon ko peeche ki seat par baithana chahiye for maximum safety.</strong><br><br><strong>Kyun peeche?</strong><br>Peeche ki seat sabse safe hoti hai kyunki accident mein front seat par zyada impact parta hai. Bachon ka body chhota hota hai aur unhein zyada protection chahiye. Isliye Sweden mein rule hai ke 135 cm se kam height wale bachon ko peeche baithana chahiye."
             },
             {
                 question: "Vad gör du om ett barn måste sitta i framsätet?",
@@ -312,7 +337,7 @@
                 ],
                 correct: 1,
                 explanation: "Om ett barn sitter i framsätet måste passagerarairbaggen vara avstängd.",
-                explanationUrdu: "Agar bacha front seat par hai to passenger airbag ko OFF karna zaroori hai."
+                explanationUrdu: "<strong>Agar bacha front seat par hai to passenger airbag ko OFF karna zaroori hai.</strong><br><br><strong>Kyun?</strong><br>Airbag bahut tez speed mein open hoti hai (200-300 km/h). Agar bacha front seat par hai aur airbag open ho jaye, to bacha serious zakhmi ho sakta hai ya mar bhi sakta hai. Isliye agar kisi majboori mein bacha front seat par baith raha ho, to airbag ko OFF karna zaroori hai."
             },
             {
                 question: "Vilken typ av bilbarnstol används för barn 0–9 månader?",
@@ -325,7 +350,7 @@
                 ],
                 correct: 1,
                 explanation: "För barn 0–9 månader används bakåtvänd babyskydd.",
-                explanationUrdu: "0-9 mahine ke bachon ke liye rear-facing babyskydd use hoti hai."
+                explanationUrdu: "<strong>0-9 mahine ke bachon ke liye rear-facing babyskydd use hoti hai.</strong><br><br><strong>Kyun rear-facing?</strong><br>Nanhe bachon ki gardan (neck) kamzor hoti hai. Accident mein agar bacha forward-facing ho to gardan par zyada zor parta hai. Rear-facing seat bachay ke pure body ko support deti hai aur neck ko protect karti hai. Isliye 0-9 mahine tak rear-facing seat use karni chahiye."
             },
             {
                 question: "När kan ett barn sitta utan bilbarnstol/booster?",
@@ -338,7 +363,7 @@
                 ],
                 correct: 2,
                 explanation: "Barn kan sitta utan bilbarnstol/booster när de är 135 cm långa.",
-                explanationUrdu: "Jab bacha 135 cm lamba ho jaye to woh bina booster ke seatbelt use kar sakta hai."
+                explanationUrdu: "<strong>Jab bacha 135 cm lamba ho jaye to woh bina booster ke seatbelt use kar sakta hai.</strong><br><br><strong>Kyun 135 cm?</strong><br>135 cm height par seatbelt bachay ke body par sahi tarah fit hoti hai - shoulder belt kandhay par aur lap belt hips par. Is se kam height par seatbelt galah ya neck par aa sakti hai jo dangerous hai. Isliye 135 cm tak booster seat use karna zaroori hai."
             },
             {
                 question: "Hur aktiverar du barnlåset på bildörren?",
@@ -351,7 +376,7 @@
                 ],
                 correct: 1,
                 explanation: "Barnlåset aktiveras med nyckel eller reglage på dörrkanten.",
-                explanationUrdu: "Child lock key ya switch se lagta hai jo darwaze ke kinare par hota hai."
+                explanationUrdu: "<strong>Child lock key ya switch se lagta hai jo darwaze ke kinare par hota hai.</strong><br><br><strong>Kaise karen?</strong><br>Darwaze ko kholen. Darwaze ke kinare (jahan latch hota hai) par ek chhota sa hole ya switch hoga. Usme key daal kar ghumayen ya switch ko move karen. Ab darwaza andar se nahi khulega, sirf bahar se khulega. Yeh bachon ko safe rakhta hai ke woh chalte waqt darwaza na khol den."
             },
             {
                 question: "Vad är spolarvätska och varför är den viktig i Sverige?",
@@ -364,7 +389,7 @@
                 ],
                 correct: 2,
                 explanation: "Spolarvätska är vindrutetorkarvätska som ska tåla -18°C eller lägre i Sverige.",
-                explanationUrdu: "Spolarvätska windshield washer fluid hai jo -18°C ya us se kam temperature par bhi freeze nahi hoti."
+                explanationUrdu: "<strong>Spolarvätska windshield washer fluid hai jo -18°C ya us se kam temperature par bhi freeze nahi hoti.</strong><br><br><strong>Kyun important hai?</strong><br>Sweden mein winter mein temperature -20°C ya us se bhi kam ho jata hai. Normal pani freeze ho kar barf ban jayega aur windshield saaf nahi hogi. Spolarvätska special fluid hai jo itni thand mein bhi liquid rehti hai aur windshield ko saaf rakhti hai."
             },
             {
                 question: "Hur säkrar du bagage i en taxi?",
@@ -377,7 +402,7 @@
                 ],
                 correct: 1,
                 explanation: "Bagage ska säkras med remmar eller band så att det inte rör sig under körning.",
-                explanationUrdu: "Luggage ko straps ya ribbon se fix karna chahiye taake travel ke doran move na ho."
+                explanationUrdu: "<strong>Luggage ko straps ya ribbon se fix karna chahiye taake travel ke doran move na ho.</strong><br><br><strong>Kyun?</strong><br>Agar luggage secure na ho to brake ya turn ke waqt luggage slide ho kar passengers ko chot pohancha sakta hai. Taxi driver hone ke naate aapki zimmedari hai ke passengers ka luggage safe rahe. Isliye straps ya bands use kar ke luggage ko fix karen."
             },
             {
                 question: "Vad gör du när examinatorn ber dig kontrollera bromsljusen?",
@@ -390,7 +415,7 @@
                 ],
                 correct: 1,
                 explanation: "Du måste faktiskt visa att ljusen fungerar genom att låta någon kontrollera dem utifrån.",
-                explanationUrdu: "Aapko actually demonstrate karna hai - examiner ko bahar bhejo ya khud bahar jakar dikhao ke light kaam kar rahi hai."
+                explanationUrdu: "<strong>Aapko actually demonstrate karna hai - examiner ko bahar bhejo ya khud bahar jakar dikhao ke light kaam kar rahi hai.</strong><br><br><strong>Kaise karen?</strong><br>Jab examiner kahe 'kontrollera bromsljusen', to sirf brake pedal dabana kafi nahi. Aapko examiner se kahna hai ke 'Var snäll och kontrollera utifrån' ya khud bahar jakar dikhana hai ke brake lights kaam kar rahi hain. Examiner expect karta hai ke aap actually check karwa ke dikhayen."
             },
             {
                 question: "Var hittar du bromsvätskebehållaren?",
@@ -403,7 +428,7 @@
                 ],
                 correct: 2,
                 explanation: "Bromsvätskebehållaren finns i motorrummet, vanligtvis nära förarplatsen.",
-                explanationUrdu: "Brake fluid ka tank engine bay mein hota hai, usually driver seat ke qareeb."
+                explanationUrdu: "<strong>Brake fluid ka tank engine bay mein hota hai, usually driver seat ke qareeb.</strong><br><br><strong>Kaise pehchanen?</strong><br>Hood kholen. Engine bay mein driver seat ki taraf ek chhota sa tank hoga jisme yellowish/brownish liquid hota hai. Tank par brake ka symbol bana hoga. Yeh brake fluid hai jo brake system ko operate karti hai."
             },
             {
                 question: "Var hittar du motoroljan?",
@@ -416,7 +441,7 @@
                 ],
                 correct: 1,
                 explanation: "Motoroljan finns i motorrummet – mätstickan visar oljenivån och påfyllningslocket används för att fylla på.",
-                explanationUrdu: "Engine oil engine bay mein hota hai - dipstick se level check karte hain aur cap se oil dalte hain."
+                explanationUrdu: "<strong>Engine oil engine bay mein hota hai - dipstick se level check karte hain aur cap se oil dalte hain.</strong><br><br><strong>Kaise check karen?</strong><br>Hood kholen. Engine ke upar ek yellow/orange ring hogi - yeh dipstick hai. Ise bahar nikalen, cloth se saaf karen, wapis dalen aur phir nikal kar dekhen ke oil level kahan hai. Oil dalne ke liye engine par ek cap hoga jisme oil symbol bana hoga."
             },
             {
                 question: "Var hittar du kylarvätskebehållaren?",
@@ -429,7 +454,7 @@
                 ],
                 correct: 1,
                 explanation: "Kylarvätskebehållaren finns i motorrummet, ofta en genomskinlig behållare med färgad vätska.",
-                explanationUrdu: "Coolant tank engine bay mein hota hai, aksar transparent container mein colored liquid ke sath."
+                explanationUrdu: "<strong>Coolant tank engine bay mein hota hai, aksar transparent container mein colored liquid ke sath.</strong><br><br><strong>Kaise pehchanen?</strong><br>Engine bay mein ek transparent ya semi-transparent tank hoga jisme pink, green, ya blue color ka liquid hoga. Tank par MIN aur MAX ka mark hoga. Yeh coolant hai jo engine ko cool rakhti hai."
             },
             {
                 question: "Var finns bilbatteriet?",
@@ -442,7 +467,7 @@
                 ],
                 correct: 1,
                 explanation: "Bilbatteriet finns vanligtvis i motorrummet, nära ena hörnet.",
-                explanationUrdu: "Car battery usually engine bay mein hoti hai, ek corner ke qareeb."
+                explanationUrdu: "<strong>Car battery usually engine bay mein hoti hai, ek corner ke qareeb.</strong><br><br><strong>Kaise pehchanen?</strong><br>Engine bay mein ek corner par black box hoga jisme se do moti cables nikal rahi hongi (ek red positive, ek black negative). Yeh car battery hai jo car start karne aur electrical systems ko power deti hai."
             },
             {
                 question: "Hur många frågor finns på säkerhetsteoriprovet för taxi?",
@@ -450,7 +475,7 @@
                 options: ["30 frågor", "40 frågor", "50 frågor", "60 frågor"],
                 correct: 2,
                 explanation: "Säkerhetsteoriprovet för taxi har 50 frågor och du måste svara rätt på minst 45.",
-                explanationUrdu: "Safety theory exam mein 50 questions hote hain aur kam az kam 45 sahi karne parte hain."
+                explanationUrdu: "<strong>Safety theory exam mein 50 questions hote hain aur kam az kam 45 sahi karne parte hain.</strong><br><br><strong>Matlab?</strong><br>Aapko 50 mein se 45 questions sahi karne hain. 5 questions ghalat hone ki gunjaish hai. Isliye achay se taiyari karen aur kam az kam 90% score karen."
             },
             {
                 question: "Hur många frågor måste du svara rätt på för att godkännas på säkerhetsteoriprovet?",
@@ -458,7 +483,7 @@
                 options: ["40 av 50", "42 av 50", "45 av 50", "48 av 50"],
                 correct: 2,
                 explanation: "Du måste svara rätt på minst 45 av 50 frågor för att godkännas.",
-                explanationUrdu: "Aapko kam az kam 45 out of 50 questions sahi karne parte hain pass hone ke liye."
+                explanationUrdu: "<strong>Aapko kam az kam 45 out of 50 questions sahi karne parte hain pass hone ke liye.</strong><br><br><strong>Percentage?</strong><br>45/50 = 90%. Matlab aapko 90% score karna hai pass hone ke liye. Sirf 5 questions ghalat hone ki gunjaish hai."
             },
             {
                 question: "Hur länge är dina godkända teoriprov giltiga?",
@@ -466,7 +491,7 @@
                 options: ["1 år", "2 år", "3 år", "5 år"],
                 correct: 2,
                 explanation: "Godkända teoriprov är giltiga i 3 år. Inom denna tid måste du klara körprovet.",
-                explanationUrdu: "Theory exams pass karne ke baad 3 saal tak valid rehte hain. In 3 saal mein practical test pass karna parta hai."
+                explanationUrdu: "<strong>Theory exams pass karne ke baad 3 saal tak valid rehte hain. In 3 saal mein practical test pass karna parta hai.</strong><br><br><strong>Matlab?</strong><br>Jab aap dono theory exams (safety aur laws) pass kar lein, to aapke paas 3 saal hain practical driving test pass karne ke liye. Agar 3 saal mein practical test pass na karen, to theory exams dobara dene parenge."
             },
             {
                 question: "Inom hur lång tid måste du klara båda teoriproven?",
@@ -474,7 +499,7 @@
                 options: ["3 månader", "6 månader", "1 år", "2 år"],
                 correct: 1,
                 explanation: "Du måste klara båda teoriproven (säkerhet och lagar/kartläsning) inom 6 månader.",
-                explanationUrdu: "Dono theory exams (safety aur laws/map reading) ko 6 mahine ke andar pass karna parta hai."
+                explanationUrdu: "<strong>Dono theory exams (safety aur laws/map reading) ko 6 mahine ke andar pass karna parta hai.</strong><br><br><strong>Matlab?</strong><br>Pehla exam pass karne ke baad aapke paas 6 mahine hain doosra exam pass karne ke liye. Agar 6 mahine mein dono exams pass na hon, to pehla exam dobara dena parega."
             }
         ];
 
@@ -505,6 +530,7 @@
             currentQuestion = index;
             document.getElementById('result').classList.add('hidden');
             document.getElementById('scoreBox').classList.add('hidden');
+            document.getElementById('navButtons').classList.add('hidden');
             renderQuestion();
             renderQuestionSelector();
         }
@@ -576,22 +602,39 @@
             }
 
             resultDiv.classList.remove('hidden');
+            document.getElementById('navButtons').classList.remove('hidden');
+            document.getElementById('submit').classList.add('hidden');
             renderQuestionSelector();
+        }
 
-            // Auto advance after 3 seconds
-            setTimeout(() => {
-                if (currentQuestion < quizData.length - 1) {
-                    currentQuestion++;
-                    renderQuestion();
-                    renderQuestionSelector();
-                } else {
-                    showFinalScore();
-                }
-            }, 3000);
+        function nextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                document.getElementById('result').classList.add('hidden');
+                document.getElementById('navButtons').classList.add('hidden');
+                document.getElementById('submit').classList.remove('hidden');
+                renderQuestion();
+                renderQuestionSelector();
+            } else {
+                showFinalScore();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                document.getElementById('result').classList.add('hidden');
+                document.getElementById('navButtons').classList.add('hidden');
+                document.getElementById('submit').classList.remove('hidden');
+                renderQuestion();
+                renderQuestionSelector();
+            }
         }
 
         function showFinalScore() {
             document.getElementById('result').classList.add('hidden');
+            document.getElementById('navButtons').classList.add('hidden');
+            document.getElementById('submit').classList.add('hidden');
             document.getElementById('scoreBox').classList.remove('hidden');
             document.getElementById('scoreNumber').textContent = `${score}/${quizData.length}`;
             document.getElementById('options').innerHTML = '';
@@ -607,6 +650,7 @@
             score = 0;
             answered.fill(null);
             document.getElementById('scoreBox').classList.add('hidden');
+            document.getElementById('submit').classList.remove('hidden');
             renderQuestion();
             renderQuestionSelector();
         }
