@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Övningstentamen - Taxi Förarprov (Säkerhet)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .quiz-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0057b8;
+            text-align: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .options label {
+            display: block;
+            margin: 10px 0;
+            padding: 12px;
+            background: #f0f4ff;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .options label:hover {
+            background: #d6e4ff;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #0057b8;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background: #003d8a;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+        .explanation {
+            margin-top: 15px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-left: 4px solid green;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Övningstentamen - Taxi Förarprov (Säkerhet)</h1>
+        <div id="quiz"></div>
+        <button id="submit">Visa resultat</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "Vad är den minsta tillåtna mönsterdjupet för sommardäck i Sverige?",
+                options: ["1.0 mm", "1.6 mm", "2.0 mm", "3.0 mm"],
+                correct: 1,
+                explanation: "I Sverige är det minsta tillåtna mönsterdjupet för sommardäck 1,6 mm."
+            },
+            {
+                question: "Vad är den minsta tillåtna mönsterdjupet för vinterdäck i Sverige?",
+                options: ["1.6 mm", "2.0 mm", "3.0 mm", "4.0 mm"],
+                correct: 2,
+                explanation: "I Sverige är det minsta tillåtna mönsterdjupet för vinterdäck 3,0 mm."
+            },
+            {
+                question: "När ska den gula skyltlampan (skolbuss/skolzon) tändas?",
+                options: [
+                    "När du ser en skolbuss",
+                    "100 meter före och 100 meter efter skolan",
+                    "Endast när barnen korsar vägen",
+                    "Endast på morgonen"
+                ],
+                correct: 1,
+                explanation: "Den gula skyltlampan ska tändas 100 meter före skolan och släckas 100 meter efter."
+            },
+            {
+                question: "Hur kontrollerar du att bilbältet fungerar korrekt?",
+                options: [
+                    "Genom att dra långsamt i det",
+                    "Genom att ge det en snabb ryckning",
+                    "Genom att titta på det",
+                    "Genom att lossa det"
+                ],
+                correct: 1,
+                explanation: "Du kontrollerar bilbältet genom att ge det en snabb ryckning – det ska låsa sig."
+            },
+            {
+                question: "Var ska ett barn under 135 cm sitta i bilen för maximal säkerhet?",
+                options: [
+                    "Fram med airbag på",
+                    "Fram med airbag av",
+                    "Bakåt i baksätet",
+                    "Var som helst"
+                ],
+                correct: 2,
+                explanation: "Barn under 135 cm ska sitta bakåt i baksätet för maximal säkerhet."
+            },
+            {
+                question: "Vad gör du om ett barn måste sitta i framsätet?",
+                options: [
+                    "Inget särskilt",
+                    "Stäng av passagerarairbaggen",
+                    "Sätt på varningsljusen",
+                    "Kör långsammare"
+                ],
+                correct: 1,
+                explanation: "Om ett barn sitter i framsätet måste passagerarairbaggen vara avstängd."
+            },
+            {
+                question: "Vad är spolarvätska och varför är den viktig i Sverige?",
+                options: [
+                    "Motorolja",
+                    "Kylarvätska",
+                    "Vindrutetorkarvätska som inte fryser vid låga temperaturer",
+                    "Bromsvätska"
+                ],
+                correct: 2,
+                explanation: "Spolarvätska är vindrutetorkarvätska som ska tåla -18°C eller lägre i Sverige."
+            },
+            {
+                question: "Hur säkrar du bagage i en taxi?",
+                options: [
+                    "Lägger det i bagageutrymmet utan att säkra",
+                    "Använder remmar eller band för att fästa det",
+                    "Ber passageraren hålla det",
+                    "Kör långsammare"
+                ],
+                correct: 1,
+                explanation: "Bagage ska säkras med remmar eller band så att det inte rör sig under körning."
+            }
+        ];
+
+        const quiz = document.getElementById('quiz');
+        const submitBtn = document.getElementById('submit');
+        const resultDiv = document.getElementById('result');
+
+        function loadQuiz() {
+            let output = '';
+            quizData.forEach((data, index) => {
+                output += `
+                    <div class="question">${index + 1}. ${data.question}</div>
+                    <div class="options">
+                        ${data.options.map((option, i) => `
+                            <label>
+                                <input type="radio" name="question${index}" value="${i}">
+                                ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+            });
+            quiz.innerHTML = output;
+        }
+
+        submitBtn.addEventListener('click', () => {
+            let score = 0;
+            let resultHTML = '';
+
+            quizData.forEach((data, index) => {
+                const selected = document.querySelector(`input[name="question${index}"]:checked`);
+                const answer = selected ? parseInt(selected.value) : null;
+
+                resultHTML += `<div style="margin-top:20px; padding:15px; background:#fafafa; border-radius:6px;">`;
+                resultHTML += `<strong>Fråga ${index + 1}:</strong> ${data.question}<br><br>`;
+
+                if (answer === data.correct) {
+                    score++;
+                    resultHTML += `<span class="correct">✓ Rätt!</span><br>`;
+                } else {
+                    resultHTML += `<span class="incorrect">✗ Fel. Rätt svar: ${data.options[data.correct]}</span><br>`;
+                }
+                resultHTML += `<div class="explanation">${data.explanation}</div>`;
+                resultHTML += `</div>`;
+            });
+
+            resultDiv.innerHTML = `
+                <div style="font-size:22px; margin-bottom:20px;">
+                    Du fick <span class="${score >= 6 ? 'correct' : 'incorrect'}">${score}</span> av ${quizData.length} rätt.
+                </div>
+                ${resultHTML}
+            `;
+
+            submitBtn.textContent = 'Försök igen';
+            submitBtn.onclick = () => location.reload();
+        });
+
+        loadQuiz();
+    </script>
+</body>
+</html>
