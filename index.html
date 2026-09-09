@@ -144,6 +144,39 @@
                 explanation: "Om ett barn sitter i framsätet måste passagerarairbaggen vara avstängd."
             },
             {
+                question: "Vilken typ av bilbarnstol används för barn 0–9 månader?",
+                options: [
+                    "Framåtvänd stol",
+                    "Bakåtvänd babyskydd",
+                    "Bälteskudde",
+                    "Utan stol"
+                ],
+                correct: 1,
+                explanation: "För barn 0–9 månader används bakåtvänd babyskydd."
+            },
+            {
+                question: "När kan ett barn sitta utan bilbarnstol/booster?",
+                options: [
+                    "När barnet är 100 cm",
+                    "När barnet är 120 cm",
+                    "När barnet är 135 cm",
+                    "När barnet är 10 år"
+                ],
+                correct: 2,
+                explanation: "Barn kan sitta utan bilbarnstol/booster när de är 135 cm långa."
+            },
+            {
+                question: "Hur aktiverar du barnlåset på bildörren?",
+                options: [
+                    "Genom att trycka på en knapp",
+                    "Genom att använda nyckel eller reglage på dörrkanten",
+                    "Genom att dra i handtaget",
+                    "Barnlåset aktiveras automatiskt"
+                ],
+                correct: 1,
+                explanation: "Barnlåset aktiveras med nyckel eller reglage på dörrkanten."
+            },
+            {
                 question: "Vad är spolarvätska och varför är den viktig i Sverige?",
                 options: [
                     "Motorolja",
@@ -164,6 +197,85 @@
                 ],
                 correct: 1,
                 explanation: "Bagage ska säkras med remmar eller band så att det inte rör sig under körning."
+            },
+            {
+                question: "Vad gör du när examinatorn ber dig kontrollera bromsljusen?",
+                options: [
+                    "Trycker på bromspedalen och sitter kvar",
+                    "Ber examinatorn gå ut och kontrollera, eller går ut själv",
+                    "Ignorerar frågan",
+                    "Säger att de fungerar"
+                ],
+                correct: 1,
+                explanation: "Du måste faktiskt visa att ljusen fungerar genom att låta någon kontrollera dem utifrån."
+            },
+            {
+                question: "Var hittar du bromsvätskebehållaren?",
+                options: [
+                    "I bagageutrymmet",
+                    "Under bilen",
+                    "I motorrummet, vanligtvis nära förarplatsen",
+                    "I handskfacket"
+                ],
+                correct: 2,
+                explanation: "Bromsvätskebehållaren finns i motorrummet, vanligtvis nära förarplatsen."
+            },
+            {
+                question: "Var hittar du motoroljan?",
+                options: [
+                    "I bagageutrymmet",
+                    "I motorrummet, mätstickan och påfyllningslocket",
+                    "Under bilen",
+                    "I handskfacket"
+                ],
+                correct: 1,
+                explanation: "Motoroljan finns i motorrummet – mätstickan visar oljenivån och påfyllningslocket används för att fylla på."
+            },
+            {
+                question: "Var hittar du kylarvätskebehållaren?",
+                options: [
+                    "I bagageutrymmet",
+                    "I motorrummet, ofta en genomskinlig behållare med färgad vätska",
+                    "Under sätet",
+                    "I handskfacket"
+                ],
+                correct: 1,
+                explanation: "Kylarvätskebehållaren finns i motorrummet, ofta en genomskinlig behållare med färgad vätska."
+            },
+            {
+                question: "Var finns bilbatteriet?",
+                options: [
+                    "I bagageutrymmet",
+                    "I motorrummet, vanligtvis nära ena hörnet",
+                    "Under bilen",
+                    "I handskfacket"
+                ],
+                correct: 1,
+                explanation: "Bilbatteriet finns vanligtvis i motorrummet, nära ena hörnet."
+            },
+            {
+                question: "Hur många frågor finns på säkerhetsteoriprovet för taxi?",
+                options: ["30 frågor", "40 frågor", "50 frågor", "60 frågor"],
+                correct: 2,
+                explanation: "Säkerhetsteoriprovet för taxi har 50 frågor och du måste svara rätt på minst 45."
+            },
+            {
+                question: "Hur många frågor måste du svara rätt på för att godkännas på säkerhetsteoriprovet?",
+                options: ["40 av 50", "42 av 50", "45 av 50", "48 av 50"],
+                correct: 2,
+                explanation: "Du måste svara rätt på minst 45 av 50 frågor för att godkännas."
+            },
+            {
+                question: "Hur länge är dina godkända teoriprov giltiga?",
+                options: ["1 år", "2 år", "3 år", "5 år"],
+                correct: 2,
+                explanation: "Godkända teoriprov är giltiga i 3 år. Inom denna tid måste du klara körprovet."
+            },
+            {
+                question: "Inom hur lång tid måste du klara båda teoriproven?",
+                options: ["3 månader", "6 månader", "1 år", "2 år"],
+                correct: 1,
+                explanation: "Du måste klara båda teoriproven (säkerhet och lagar/kartläsning) inom 6 månader."
             }
         ];
 
@@ -212,7 +324,7 @@
 
             resultDiv.innerHTML = `
                 <div style="font-size:22px; margin-bottom:20px;">
-                    Du fick <span class="${score >= 6 ? 'correct' : 'incorrect'}">${score}</span> av ${quizData.length} rätt.
+                    Du fick <span class="${score >= quizData.length * 0.9 ? 'correct' : 'incorrect'}">${score}</span> av ${quizData.length} rätt.
                 </div>
                 ${resultHTML}
             `;
