@@ -208,4 +208,412 @@
         .q-btn.current {
             background: #667eea;
             color: white;
-            transf
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>🚗 Taxi License Quiz</h1>
+        <div class="subtitle">Part 1 - Säkerhet (Safety)</div>
+        
+        <div class="lang-toggle">
+            <button class="lang-btn active" onclick="setLanguage('sv')">Svenska</button>
+            <button class="lang-btn" onclick="setLanguage('ur')">Roman Urdu</button>
+        </div>
+
+        <div class="progress" id="progress">Fråga 1 av 20</div>
+
+        <div class="question-selector" id="questionSelector"></div>
+
+        <div class="question-box">
+            <div class="question" id="question"></div>
+            <div class="question-urdu hidden" id="questionUrdu"></div>
+        </div>
+
+        <div class="options" id="options"></div>
+
+        <button class="btn" id="submit" onclick="checkAnswer()">Kontrollera svar</button>
+
+        <div class="result hidden" id="result"></div>
+
+        <div class="score-box hidden" id="scoreBox">
+            <div class="score-number" id="scoreNumber">0/20</div>
+            <div>Rätta svar</div>
+            <button class="btn" onclick="restartQuiz()" style="margin-top:15px;">Spela igen</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "Vad är den minsta tillåtna mönsterdjupet för sommardäck i Sverige?",
+                questionUrdu: "Sweden mein summer tyres ki minimum legal depth kitni honi chahiye?",
+                options: ["1.0 mm", "1.6 mm", "2.0 mm", "3.0 mm"],
+                correct: 1,
+                explanation: "I Sverige är det minsta tillåtna mönsterdjupet för sommardäck 1,6 mm.",
+                explanationUrdu: "Sweden mein summer tyres ki minimum legal depth 1.6 mm hoti hai."
+            },
+            {
+                question: "Vad är den minsta tillåtna mönsterdjupet för vinterdäck i Sverige?",
+                questionUrdu: "Sweden mein winter tyres ki minimum legal depth kitni honi chahiye?",
+                options: ["1.6 mm", "2.0 mm", "3.0 mm", "4.0 mm"],
+                correct: 2,
+                explanation: "I Sverige är det minsta tillåtna mönsterdjupet för vinterdäck 3,0 mm.",
+                explanationUrdu: "Sweden mein winter tyres ki minimum legal depth 3.0 mm hoti hai."
+            },
+            {
+                question: "När ska den gula skyltlampan (skolbuss/skolzon) tändas?",
+                questionUrdu: "Yellow school light kab on karni chahiye?",
+                options: [
+                    "När du ser en skolbuss",
+                    "100 meter före och 100 meter efter skolan",
+                    "Endast när barnen korsar vägen",
+                    "Endast på morgonen"
+                ],
+                correct: 1,
+                explanation: "Den gula skyltlampan ska tändas 100 meter före skolan och släckas 100 meter efter.",
+                explanationUrdu: "Yellow light school se 100 meter pehle on karni hai aur 100 meter baad off karni hai."
+            },
+            {
+                question: "Hur kontrollerar du att bilbältet fungerar korrekt?",
+                questionUrdu: "Seatbelt theek hai ya nahi, yeh kaise check karenge?",
+                options: [
+                    "Genom att dra långsamt i det",
+                    "Genom att ge det en snabb ryckning",
+                    "Genom att titta på det",
+                    "Genom att lossa det"
+                ],
+                correct: 1,
+                explanation: "Du kontrollerar bilbältet genom att ge det en snabb ryckning – det ska låsa sig.",
+                explanationUrdu: "Seatbelt ko tez jhatka dekar check karte hain - agar lock ho jaye to seatbelt sahi hai."
+            },
+            {
+                question: "Var ska ett barn under 135 cm sitta i bilen för maximal säkerhet?",
+                questionUrdu: "135 cm se kam height wala bacha gaadi mein kahan baithay for best safety?",
+                options: [
+                    "Fram med airbag på",
+                    "Fram med airbag av",
+                    "Bakåt i baksätet",
+                    "Var som helst"
+                ],
+                correct: 2,
+                explanation: "Barn under 135 cm ska sitta bakåt i baksätet för maximal säkerhet.",
+                explanationUrdu: "135 cm se kam height wale bachon ko peeche ki seat par baithana chahiye for maximum safety."
+            },
+            {
+                question: "Vad gör du om ett barn måste sitta i framsätet?",
+                questionUrdu: "Agar bacha front seat par baith raha ho to kya karna chahiye?",
+                options: [
+                    "Inget särskilt",
+                    "Stäng av passagerarairbaggen",
+                    "Sätt på varningsljusen",
+                    "Kör långsammare"
+                ],
+                correct: 1,
+                explanation: "Om ett barn sitter i framsätet måste passagerarairbaggen vara avstängd.",
+                explanationUrdu: "Agar bacha front seat par hai to passenger airbag ko OFF karna zaroori hai."
+            },
+            {
+                question: "Vilken typ av bilbarnstol används för barn 0–9 månader?",
+                questionUrdu: "0-9 mahine ke bachon ke liye kaunsi child seat use hoti hai?",
+                options: [
+                    "Framåtvänd stol",
+                    "Bakåtvänd babyskydd",
+                    "Bälteskudde",
+                    "Utan stol"
+                ],
+                correct: 1,
+                explanation: "För barn 0–9 månader används bakåtvänd babyskydd.",
+                explanationUrdu: "0-9 mahine ke bachon ke liye rear-facing babyskydd use hoti hai."
+            },
+            {
+                question: "När kan ett barn sitta utan bilbarnstol/booster?",
+                questionUrdu: "Bacha bina child seat/booster ke kab baith sakta hai?",
+                options: [
+                    "När barnet är 100 cm",
+                    "När barnet är 120 cm",
+                    "När barnet är 135 cm",
+                    "När barnet är 10 år"
+                ],
+                correct: 2,
+                explanation: "Barn kan sitta utan bilbarnstol/booster när de är 135 cm långa.",
+                explanationUrdu: "Jab bacha 135 cm lamba ho jaye to woh bina booster ke seatbelt use kar sakta hai."
+            },
+            {
+                question: "Hur aktiverar du barnlåset på bildörren?",
+                questionUrdu: "Child lock kaise lagate hain gaadi ke darwaze par?",
+                options: [
+                    "Genom att trycka på en knapp",
+                    "Genom att använda nyckel eller reglage på dörrkanten",
+                    "Genom att dra i handtaget",
+                    "Barnlåset aktiveras automatiskt"
+                ],
+                correct: 1,
+                explanation: "Barnlåset aktiveras med nyckel eller reglage på dörrkanten.",
+                explanationUrdu: "Child lock key ya switch se lagta hai jo darwaze ke kinare par hota hai."
+            },
+            {
+                question: "Vad är spolarvätska och varför är den viktig i Sverige?",
+                questionUrdu: "Spolarvätska kya hai aur Sweden mein yeh kyun important hai?",
+                options: [
+                    "Motorolja",
+                    "Kylarvätska",
+                    "Vindrutetorkarvätska som inte fryser vid låga temperaturer",
+                    "Bromsvätska"
+                ],
+                correct: 2,
+                explanation: "Spolarvätska är vindrutetorkarvätska som ska tåla -18°C eller lägre i Sverige.",
+                explanationUrdu: "Spolarvätska windshield washer fluid hai jo -18°C ya us se kam temperature par bhi freeze nahi hoti."
+            },
+            {
+                question: "Hur säkrar du bagage i en taxi?",
+                questionUrdu: "Taxi mein luggage ko kaise secure karenge?",
+                options: [
+                    "Lägger det i bagageutrymmet utan att säkra",
+                    "Använder remmar eller band för att fästa det",
+                    "Ber passageraren hålla det",
+                    "Kör långsammare"
+                ],
+                correct: 1,
+                explanation: "Bagage ska säkras med remmar eller band så att det inte rör sig under körning.",
+                explanationUrdu: "Luggage ko straps ya ribbon se fix karna chahiye taake travel ke doran move na ho."
+            },
+            {
+                question: "Vad gör du när examinatorn ber dig kontrollera bromsljusen?",
+                questionUrdu: "Jab examiner kahe brake lights check karwao to kya karenge?",
+                options: [
+                    "Trycker på bromspedalen och sitter kvar",
+                    "Ber examinatorn gå ut och kontrollera, eller går ut själv",
+                    "Ignorerar frågan",
+                    "Säger att de fungerar"
+                ],
+                correct: 1,
+                explanation: "Du måste faktiskt visa att ljusen fungerar genom att låta någon kontrollera dem utifrån.",
+                explanationUrdu: "Aapko actually demonstrate karna hai - examiner ko bahar bhejo ya khud bahar jakar dikhao ke light kaam kar rahi hai."
+            },
+            {
+                question: "Var hittar du bromsvätskebehållaren?",
+                questionUrdu: "Brake fluid ka reservoir kahan hota hai?",
+                options: [
+                    "I bagageutrymmet",
+                    "Under bilen",
+                    "I motorrummet, vanligtvis nära förarplatsen",
+                    "I handskfacket"
+                ],
+                correct: 2,
+                explanation: "Bromsvätskebehållaren finns i motorrummet, vanligtvis nära förarplatsen.",
+                explanationUrdu: "Brake fluid ka tank engine bay mein hota hai, usually driver seat ke qareeb."
+            },
+            {
+                question: "Var hittar du motoroljan?",
+                questionUrdu: "Engine oil kahan hota hai?",
+                options: [
+                    "I bagageutrymmet",
+                    "I motorrummet, mätstickan och påfyllningslocket",
+                    "Under bilen",
+                    "I handskfacket"
+                ],
+                correct: 1,
+                explanation: "Motoroljan finns i motorrummet – mätstickan visar oljenivån och påfyllningslocket används för att fylla på.",
+                explanationUrdu: "Engine oil engine bay mein hota hai - dipstick se level check karte hain aur cap se oil dalte hain."
+            },
+            {
+                question: "Var hittar du kylarvätskebehållaren?",
+                questionUrdu: "Coolant ka tank kahan hota hai?",
+                options: [
+                    "I bagageutrymmet",
+                    "I motorrummet, ofta en genomskinlig behållare med färgad vätska",
+                    "Under sätet",
+                    "I handskfacket"
+                ],
+                correct: 1,
+                explanation: "Kylarvätskebehållaren finns i motorrummet, ofta en genomskinlig behållare med färgad vätska.",
+                explanationUrdu: "Coolant tank engine bay mein hota hai, aksar transparent container mein colored liquid ke sath."
+            },
+            {
+                question: "Var finns bilbatteriet?",
+                questionUrdu: "Car battery kahan hoti hai?",
+                options: [
+                    "I bagageutrymmet",
+                    "I motorrummet, vanligtvis nära ena hörnet",
+                    "Under bilen",
+                    "I handskfacket"
+                ],
+                correct: 1,
+                explanation: "Bilbatteriet finns vanligtvis i motorrummet, nära ena hörnet.",
+                explanationUrdu: "Car battery usually engine bay mein hoti hai, ek corner ke qareeb."
+            },
+            {
+                question: "Hur många frågor finns på säkerhetsteoriprovet för taxi?",
+                questionUrdu: "Taxi safety theory exam mein kitne questions hote hain?",
+                options: ["30 frågor", "40 frågor", "50 frågor", "60 frågor"],
+                correct: 2,
+                explanation: "Säkerhetsteoriprovet för taxi har 50 frågor och du måste svara rätt på minst 45.",
+                explanationUrdu: "Safety theory exam mein 50 questions hote hain aur kam az kam 45 sahi karne parte hain."
+            },
+            {
+                question: "Hur många frågor måste du svara rätt på för att godkännas på säkerhetsteoriprovet?",
+                questionUrdu: "Safety theory exam pass karne ke liye kitne questions sahi karne parte hain?",
+                options: ["40 av 50", "42 av 50", "45 av 50", "48 av 50"],
+                correct: 2,
+                explanation: "Du måste svara rätt på minst 45 av 50 frågor för att godkännas.",
+                explanationUrdu: "Aapko kam az kam 45 out of 50 questions sahi karne parte hain pass hone ke liye."
+            },
+            {
+                question: "Hur länge är dina godkända teoriprov giltiga?",
+                questionUrdu: "Pass kiye hue theory exams kitne time tak valid rehte hain?",
+                options: ["1 år", "2 år", "3 år", "5 år"],
+                correct: 2,
+                explanation: "Godkända teoriprov är giltiga i 3 år. Inom denna tid måste du klara körprovet.",
+                explanationUrdu: "Theory exams pass karne ke baad 3 saal tak valid rehte hain. In 3 saal mein practical test pass karna parta hai."
+            },
+            {
+                question: "Inom hur lång tid måste du klara båda teoriproven?",
+                questionUrdu: "Dono theory exams kitne time ke andar pass karne parte hain?",
+                options: ["3 månader", "6 månader", "1 år", "2 år"],
+                correct: 1,
+                explanation: "Du måste klara båda teoriproven (säkerhet och lagar/kartläsning) inom 6 månader.",
+                explanationUrdu: "Dono theory exams (safety aur laws/map reading) ko 6 mahine ke andar pass karna parta hai."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let currentLang = 'sv';
+        let answered = new Array(quizData.length).fill(null);
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderQuestion();
+        }
+
+        function renderQuestionSelector() {
+            const selector = document.getElementById('questionSelector');
+            selector.innerHTML = quizData.map((_, i) => {
+                let className = 'q-btn';
+                if (i === currentQuestion) className += ' current';
+                if (answered[i] === true) className += ' answered-correct';
+                if (answered[i] === false) className += ' answered-wrong';
+                return `<button class="${className}" onclick="goToQuestion(${i})">${i + 1}</button>`;
+            }).join('');
+        }
+
+        function goToQuestion(index) {
+            currentQuestion = index;
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('scoreBox').classList.add('hidden');
+            renderQuestion();
+            renderQuestionSelector();
+        }
+
+        function renderQuestion() {
+            const data = quizData[currentQuestion];
+            document.getElementById('progress').textContent = currentLang === 'sv' 
+                ? `Fråga ${currentQuestion + 1} av ${quizData.length}`
+                : `Sawal ${currentQuestion + 1} of ${quizData.length}`;
+            
+            document.getElementById('question').textContent = data.question;
+            document.getElementById('questionUrdu').textContent = data.questionUrdu;
+            
+            if (currentLang === 'ur') {
+                document.getElementById('questionUrdu').classList.remove('hidden');
+            } else {
+                document.getElementById('questionUrdu').classList.add('hidden');
+            }
+
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = data.options.map((option, i) => `
+                <label>
+                    <input type="radio" name="answer" value="${i}">
+                    ${option}
+                </label>
+            `).join('');
+
+            document.getElementById('submit').textContent = currentLang === 'sv' 
+                ? 'Kontrollera svar' 
+                : 'Check Answer';
+        }
+
+        function checkAnswer() {
+            const selected = document.querySelector('input[name="answer"]:checked');
+            if (!selected) {
+                alert(currentLang === 'sv' ? 'Välj ett svar först!' : 'Pehle answer select karen!');
+                return;
+            }
+
+            const answer = parseInt(selected.value);
+            const data = quizData[currentQuestion];
+            const resultDiv = document.getElementById('result');
+            
+            answered[currentQuestion] = (answer === data.correct);
+            
+            if (answer === data.correct) {
+                score++;
+                resultDiv.className = 'result correct';
+                resultDiv.innerHTML = `
+                    <div class="result-title">✓ ${currentLang === 'sv' ? 'Rätt!' : 'Sahi Jawab!'}</div>
+                    <div class="explanation">
+                        <div class="explanation-title">${currentLang === 'sv' ? 'Förklaring:' : 'Tafseel:'}</div>
+                        <div class="explanation-sv">${data.explanation}</div>
+                        <div class="explanation-ur">${data.explanationUrdu}</div>
+                    </div>
+                `;
+            } else {
+                resultDiv.className = 'result incorrect';
+                resultDiv.innerHTML = `
+                    <div class="result-title">✗ ${currentLang === 'sv' ? 'Fel!' : 'Ghalat Jawab!'}</div>
+                    <div class="explanation">
+                        <div class="explanation-title">${currentLang === 'sv' ? 'Rätt svar:' : 'Sahi Jawab:'}</div>
+                        <div class="explanation-sv">${data.options[data.correct]}</div>
+                        <div class="explanation-title" style="margin-top:10px;">${currentLang === 'sv' ? 'Förklaring:' : 'Tafseel:'}</div>
+                        <div class="explanation-sv">${data.explanation}</div>
+                        <div class="explanation-ur">${data.explanationUrdu}</div>
+                    </div>
+                `;
+            }
+
+            resultDiv.classList.remove('hidden');
+            renderQuestionSelector();
+
+            // Auto advance after 3 seconds
+            setTimeout(() => {
+                if (currentQuestion < quizData.length - 1) {
+                    currentQuestion++;
+                    renderQuestion();
+                    renderQuestionSelector();
+                } else {
+                    showFinalScore();
+                }
+            }, 3000);
+        }
+
+        function showFinalScore() {
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('scoreBox').classList.remove('hidden');
+            document.getElementById('scoreNumber').textContent = `${score}/${quizData.length}`;
+            document.getElementById('options').innerHTML = '';
+            document.getElementById('question').textContent = currentLang === 'sv' 
+                ? 'Grattis! Du har klarat quizet!' 
+                : 'Mubarak ho! Aapne quiz complete kar liya!';
+            document.getElementById('questionUrdu').textContent = '';
+            document.getElementById('progress').textContent = '';
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answered.fill(null);
+            document.getElementById('scoreBox').classList.add('hidden');
+            renderQuestion();
+            renderQuestionSelector();
+        }
+
+        // Initialize
+        renderQuestion();
+        renderQuestionSelector();
+    </script>
+</body>
+</html>
