@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taxi License Quiz - Game Mode</title>
+    <title>Taxi License Quiz - Complete</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -29,6 +29,31 @@
             color: #666;
             margin-bottom: 20px;
             font-size: 14px;
+        }
+        .part-toggle {
+            text-align: center;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .part-btn {
+            padding: 12px 30px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+        .part-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        .part-btn:hover {
+            transform: scale(1.05);
         }
         .lang-toggle {
             text-align: center;
@@ -60,12 +85,12 @@
         }
         .question-selector {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+            gap: 8px;
             margin-bottom: 25px;
         }
         .q-btn {
-            padding: 15px;
+            padding: 12px;
             background: #f0f4ff;
             border: 2px solid #667eea;
             border-radius: 8px;
@@ -73,6 +98,7 @@
             font-weight: bold;
             color: #667eea;
             transition: 0.3s;
+            font-size: 14px;
         }
         .q-btn:hover {
             background: #667eea;
@@ -235,8 +261,13 @@
 <body>
     <div class="quiz-container">
         <h1>🚗 Taxi License Quiz</h1>
-        <div class="subtitle">Part 1 - Säkerhet (Safety)</div>
+        <div class="subtitle">Complete Practice - Part 1 & Part 2</div>
         
+        <div class="part-toggle">
+            <button class="part-btn active" onclick="switchPart(1)">Part 1 - Safety</button>
+            <button class="part-btn" onclick="switchPart(2)">Part 2 - Driving</button>
+        </div>
+
         <div class="lang-toggle">
             <button class="lang-btn active" onclick="setLanguage('sv')">Svenska</button>
             <button class="lang-btn" onclick="setLanguage('ur')">Roman Urdu</button>
@@ -263,14 +294,14 @@
         </div>
 
         <div class="score-box hidden" id="scoreBox">
-            <div class="score-number" id="scoreNumber">0/20</div>
-            <div>Rätta svar</div>
+            <div class="score-number" id="scoreNumber">0/0</div>
+            <div id="scoreText">Rätta svar</div>
             <button class="btn" onclick="restartQuiz()" style="margin-top:15px;">Spela igen</button>
         </div>
     </div>
 
     <script>
-        const quizData = [
+        const quizDataPart1 = [
             {
                 question: "Vad är den minsta tillåtna mönsterdjupet för sommardäck i Sverige?",
                 questionUrdu: "Sweden mein summer tyres ki minimum legal depth kitni honi chahiye?",
@@ -503,10 +534,232 @@
             }
         ];
 
+        const quizDataPart2 = [
+            {
+                question: "Vad ska du göra innan du börjar köra när bilen står parkerad?",
+                questionUrdu: "Jab gaadi parked ho aur aap start karne walay hon to kya karna chahiye?",
+                options: [
+                    "Bara starta motorn",
+                    "Kolla i backspeglarna och ge blinkers",
+                    "Tuta i hornet",
+                    "Sätta på varningsljusen"
+                ],
+                correct: 1,
+                explanation: "Innan du börjar köra ska du alltid kolla i backspeglarna och ge blinkers för att visa att du ska köra ut.",
+                explanationUrdu: "<strong>Start karne se pehle hamesha mirrors check karen aur indicator lagayen.</strong><br><br><strong>Kyun?</strong><br>Jab bhi aap parked car se nikal kar road par aate hain, to pehle mirrors mein dekhen ke peeche se koi aa to nahi raha. Phir indicator lagayen taake doosre drivers ko pata chale ke aap nikalne walay hain. Yeh safety ke liye bohat zaroori hai."
+            },
+            {
+                question: "Hur ska du köra för att visa att du är en professionell taxiförare?",
+                questionUrdu: "Professional taxi driver ki tarah kaise drive karen?",
+                options: [
+                    "Köra så långsamt som möjligt",
+                    "Köra mjukt och jämnt utan hårda inbromsningar",
+                    "Köra fort för att komma fram snabbt",
+                    "Köra som vanligt"
+                ],
+                correct: 1,
+                explanation: "Du ska köra mjukt och jämnt så att passageraren inte känner sig obekväm. Undvik hårda inbromsningar och snabba accelerationer.",
+                explanationUrdu: "<strong>Smooth drive karen - na zyada slow, na zyada fast.</strong><br><br><strong>Kaise?</strong><br>Professional driver hamesha smooth drive karta hai. Hard brake na karen, smooth acceleration karen. Examiner yeh dekhta hai ke aap passenger ko comfortable ride de sakte hain ya nahi. Agar aap hard brake karenge to passenger uncomfortable hoga."
+            },
+            {
+                question: "Vad ska du göra om examinatorn ber dig att köra till en adress?",
+                questionUrdu: "Agar examiner kisi address par le jane ko kahe to kya karen?",
+                options: [
+                    "Fråga om att få använda Google Maps på mobilen",
+                    "Köra utan GPS",
+                    "Säga att du inte vet vägen",
+                    "Köra vilken väg som helst"
+                ],
+                correct: 0,
+                explanation: "Du kan be om att få använda Google Maps på din mobil om du inte är van vid bilens GPS.",
+                explanationUrdu: "<strong>Google Maps use karne ki ijazat lein.</strong><br><br><strong>Kaise?</strong><br>Agar examiner kisi address par le jane ko kahe, to aap keh sakte hain ke 'Main Google Maps use kar sakta hoon?' Zyada tar log car GPS ki bajaye Google Maps use karte hain. Examiner allow kar deta hai. Apna phone holder saath le jayen taake phone fix kar saken."
+            },
+            {
+                question: "Var ska du stanna bilen om examinatorn vill ange en adress under körningen?",
+                questionUrdu: "Agar driving ke doran examiner address dena chahe to kahan rukna chahiye?",
+                options: [
+                    "Vid en busshållplats",
+                    "På en säker plats som en parkering",
+                    "Mitt i vägen",
+                    "Var som helst"
+                ],
+                correct: 1,
+                explanation: "Du ska aldrig stanna vid en busshållplats. Välj en säker plats som en parkering eller sidoväg.",
+                explanationUrdu: "<strong>Safe jagah par roken - bus stop par nahi.</strong><br><br><strong>Kahan roken?</strong><br>Agar driving ke doran examiner address dena chahe, to kisi safe jagah par roken jaise parking lot ya side road. Bus stop par kabhi na roken kyunki yeh illegal hai aur dangerous bhi. Pehle plan karen ke kahan safe jagah hai, phir wahan roken."
+            },
+            {
+                question: "Hur ska du släppa av en passagerare vid en adress?",
+                questionUrdu: "Passenger ko address par kahan utarna chahiye?",
+                options: [
+                    "På motsatt sida av vägen",
+                    "På samma sida som adressen så passageraren inte behöver korsa vägen",
+                    "Var som helst",
+                    "Långt från adressen"
+                ],
+                correct: 1,
+                explanation: "Du ska släppa av passageraren på samma sida som adressen så att passageraren inte behöver korsa vägen.",
+                explanationUrdu: "<strong>Passenger ko usi side par utaren jahan uska ghar/destination ho.</strong><br><br><strong>Kyun?</strong><br>Agar passenger ko doosri side par utarenge to usay road cross karni paregi jo dangerous hai. Examiner yeh dekhta hai ke aap passenger ko safe tareeqay se utarte hain. Agar address right side par hai to right side par roken, left side par hai to left side par."
+            },
+            {
+                question: "Vad ska du göra om du kör fel och missar en sväng?",
+                questionUrdu: "Agar aap wrong turn le len ya turn miss kar den to kya karen?",
+                options: [
+                    "Göra en farlig U-sväng direkt",
+                    "Fortsätta köra och ta nästa möjlighet att vända tillbaka",
+                    "Stanna mitt i vägen",
+                    "Backa tillbaka"
+                ],
+                correct: 1,
+                explanation: "Om du missar en sväng, fortsätt köra och ta nästa säkra möjlighet att vända tillbaka. Gör inga farliga manövrar.",
+                explanationUrdu: "<strong>Agar wrong turn ho jaye to ghabrayen nahi - agle safe jagah se wapis ayen.</strong><br><br><strong>Kya na karen?</strong><br>Hard brake na karen, U-turn foran na karen, aur na hi back karen. Yeh sab dangerous hai. Calm rahen, aage jayen aur next safe jagah se U-turn le kar wapis ayen. Examiner yeh dekhta hai ke aap pressure mein kaise react karte hain."
+            },
+            {
+                question: "Hur ofta ska du kontrollera speglarna under körning?",
+                questionUrdu: "Driving ke doran mirrors kitni baar check karne chahiye?",
+                options: [
+                    "Aldrig",
+                    "En gång i början",
+                    "Kontinuerligt under hela körningen",
+                    "Bara vid svängar"
+                ],
+                correct: 2,
+                explanation: "Du ska kontinuerligt kontrollera speglarna under hela körningen för att vara medveten om trafiken runt dig.",
+                explanationUrdu: "<strong>Mirrors ko continuously check karte rahen.</strong><br><br><strong>Kaise?</strong><br>Head hamesha move hoti rahay - kabhi left mirror, kabhi right mirror, kabhi rear mirror. Examiner yeh dekhta hai ke aap aware hain ke aas paas kya ho raha hai. Even agar aapko pata ho ke peeche koi nahi, phir bhi mirror check karen taake examiner ko lage ke aap attentive hain."
+            },
+            {
+                question: "Vad ska du göra när du närmar dig en övergångsställe?",
+                questionUrdu: "Jab pedestrian crossing ke qareeb pohanchen to kya karen?",
+                options: [
+                    "Köra vidare i samma hastighet",
+                    "Sakta in och vara beredd att stanna för fotgängare",
+                    "Tuta i hornet",
+                    "Accelerera för att komma förbi snabbt"
+                ],
+                correct: 1,
+                explanation: "Du ska sakta in och vara beredd att stanna för fotgängare vid övergångsställen.",
+                explanationUrdu: "<strong>Pedestrian crossing par slow karen aur ready rahen ke koi aa sakta hai.</strong><br><br><strong>Kyun?</strong><br>Pedestrians kabhi bhi aa sakte hain. Hamesha crossing ke qareeb speed kam karen aur mirrors check karen. Kabhi kabhi view block hota hai aur pedestrian achanak aa jata hai. Isliye hamesha alert rahen."
+            },
+            {
+                question: "Hur ska du köra i förhållande till hastighetsbegränsningen?",
+                questionUrdu: "Speed limit ke hisaab se kaise drive karen?",
+                options: [
+                    "Alltid köra mycket långsammare",
+                    "Köra i hastighetsbegränsningen om väglaget tillåter",
+                    "Alltid köra fortare",
+                    "Det spelar ingen roll"
+                ],
+                correct: 1,
+                explanation: "Du ska köra i hastighetsbegränsningen om väglaget tillåter. Att köra för långsamt kan vara lika farligt som att köra för fort.",
+                explanationUrdu: "<strong>Speed limit ke mutabiq drive karen - na zyada slow, na zyada fast.</strong><br><br><strong>Kyun?</strong><br>Agar speed limit 60 hai aur road condition achi hai, to 60 par hi drive karen. Zyada slow drive karne se passenger ko time zyada lagega aur paise zyada parenge. Professional driver speed limit ke hisaab se drive karta hai."
+            },
+            {
+                question: "Vad ska du göra när två filer slås samman?",
+                questionUrdu: "Jab do lanes merge ho rahin hon to kya karen?",
+                options: [
+                    "Byta fil i sista ögonblicket",
+                    "Planera i förväg vilken fil du ska vara i och använda backspegeln",
+                    "Stanna och vänta",
+                    "Tuta i hornet"
+                ],
+                correct: 1,
+                explanation: "Du ska planera i förväg vilken fil du ska vara i och kontinuerligt kontrollera backspegeln innan du byter fil.",
+                explanationUrdu: "<strong>Pehle se plan karen ke kis lane mein jana hai aur mirror check karen.</strong><br><br><strong>Kaise?</strong><br>Jab do lanes merge ho rahin hon, to pehle hi decide kar len ke aapko kis lane mein jana hai. Mirror check karen, indicator lagayen, aur phir smoothly lane change karen. Last moment par hard brake ya sudden lane change na karen."
+            },
+            {
+                question: "Vad ska du göra om du är osäker på stavningen av en adress?",
+                questionUrdu: "Agar address ki spelling samajh na aaye to kya karen?",
+                options: [
+                    "Gissa stavningen",
+                    "Be examinatorn att visa adressen eller stava den",
+                    "Köra hem",
+                    "Säga att du inte kan köra"
+                ],
+                correct: 1,
+                explanation: "Du kan be examinatorn att visa adressen på sin telefon eller stava den tydligare om du är osäker på stavningen.",
+                explanationUrdu: "<strong>Agar spelling samajh na aaye to examiner se clear karwayen.</strong><br><br><strong>Kaise?</strong><br>Swedish spelling mushkil ho sakti hai. Agar samajh na aaye to examiner se kahen ke 'Can you show me the address?' ya 'Can you spell it?' Examiner aapko phone dikha dega ya clear kar ke bata dega. Yeh perfectly okay hai."
+            },
+            {
+                question: "Vad ska du göra när du svänger?",
+                questionUrdu: "Turn lete waqt kya karna chahiye?",
+                options: [
+                    "Svänga utan att titta",
+                    "Använda backspegeln, ge blinkers och titta efter fotgängare och cyklister",
+                    "Bara titta framåt",
+                    "Tuta i hornet"
+                ],
+                correct: 1,
+                explanation: "Innan du svänger ska du använda backspegeln, ge blinkers och titta efter fotgängare och cyklister.",
+                explanationUrdu: "<strong>Turn se pehle mirror check, indicator, aur pedestrians/cyclists ko dekhen.</strong><br><br><strong>Sequence?</strong><br>Pehle mirror check karen, phir indicator lagayen, phir dekhen ke koi pedestrian ya cyclist to nahi aa raha. Phir smoothly turn len. Yeh sequence hamesha follow karen."
+            },
+            {
+                question: "Hur ska du bete dig mot andra trafikanter?",
+                questionUrdu: "Doosre drivers aur pedestrians ke sath kaise behave karen?",
+                options: [
+                    "Vara aggressiv och tuta mycket",
+                    "Vara artig och ge väg när det behövs",
+                    "Ignorera andra",
+                    "Köra fort för att komma före"
+                ],
+                correct: 1,
+                explanation: "Du ska vara artig och ge väg när det behövs. En professionell taxiförare är vänlig och säker.",
+                explanationUrdu: "<strong>Polite rahen aur doosron ko raasta den.</strong><br><br><strong>Kyun?</strong><br>Professional driver hamesha polite hota hai. Agar koi pedestrian ja raha hai to usay raasta den. Doosre drivers ke sath aggressive na hon. Examiner yeh dekhta hai ke aap defensive driver hain ya aggressive."
+            },
+            {
+                question: "Vad ska du göra om du behöver justera GPS:n under körningen?",
+                questionUrdu: "Agar GPS adjust karni ho driving ke doran to kya karen?",
+                options: [
+                    "Justera den medan du kör",
+                    "Stanna på en säker plats först",
+                    "Be examinatorn att justera den",
+                    "Ignorera GPS:n"
+                ],
+                correct: 1,
+                explanation: "Du ska alltid stanna på en säker plats innan du justerar GPS:n. Det är farligt att använda mobilen medan du kör.",
+                explanationUrdu: "<strong>GPS adjust karne ke liye hamesha safe jagah par roken.</strong><br><br><strong>Kyun?</strong><br>Driving ke doran GPS ya phone use karna dangerous hai. Pehle kisi safe jagah par roken (parking ya side road), phir GPS adjust karen. Moving car mein phone use na karen."
+            },
+            {
+                question: "Vad är viktigast för att klara körprovet?",
+                questionUrdu: "Driving test pass karne ke liye sabse important kya hai?",
+                options: [
+                    "Köra fort",
+                    "Köra säkert, mjukt och följa trafikregler",
+                    "Köra långsamt",
+                    "Köra som vanligt"
+                ],
+                correct: 1,
+                explanation: "Det viktigaste är att köra säkert, mjukt och följa alla trafikregler. Hastigheten är mindre viktig än säkerheten.",
+                explanationUrdu: "<strong>Safety, smooth driving aur traffic rules follow karna sabse important hai.</strong><br><br><strong>Kyun?</strong><br>Examiner yeh nahi dekhta ke aap kitni tezi se drive karte hain. Woh dekhta hai ke aap safe hain, smooth drive karte hain, aur rules follow karte hain. In teen cheezon par focus karen."
+            }
+        ];
+
+        let currentPart = 1;
         let currentQuestion = 0;
         let score = 0;
         let currentLang = 'sv';
-        let answered = new Array(quizData.length).fill(null);
+        let answered = new Array(quizDataPart1.length).fill(null);
+
+        function switchPart(part) {
+            currentPart = part;
+            currentQuestion = 0;
+            score = 0;
+            
+            if (part === 1) {
+                answered = new Array(quizDataPart1.length).fill(null);
+            } else {
+                answered = new Array(quizDataPart2.length).fill(null);
+            }
+            
+            document.querySelectorAll('.part-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.part-btn')[part - 1].classList.add('active');
+            
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('navButtons').classList.add('hidden');
+            document.getElementById('scoreBox').classList.add('hidden');
+            document.getElementById('submit').classList.remove('hidden');
+            
+            renderQuestion();
+            renderQuestionSelector();
+        }
 
         function setLanguage(lang) {
             currentLang = lang;
@@ -515,9 +768,14 @@
             renderQuestion();
         }
 
+        function getCurrentData() {
+            return currentPart === 1 ? quizDataPart1 : quizDataPart2;
+        }
+
         function renderQuestionSelector() {
+            const data = getCurrentData();
             const selector = document.getElementById('questionSelector');
-            selector.innerHTML = quizData.map((_, i) => {
+            selector.innerHTML = data.map((_, i) => {
                 let className = 'q-btn';
                 if (i === currentQuestion) className += ' current';
                 if (answered[i] === true) className += ' answered-correct';
@@ -536,13 +794,15 @@
         }
 
         function renderQuestion() {
-            const data = quizData[currentQuestion];
-            document.getElementById('progress').textContent = currentLang === 'sv' 
-                ? `Fråga ${currentQuestion + 1} av ${quizData.length}`
-                : `Sawal ${currentQuestion + 1} of ${quizData.length}`;
+            const data = getCurrentData();
+            const currentData = data[currentQuestion];
             
-            document.getElementById('question').textContent = data.question;
-            document.getElementById('questionUrdu').textContent = data.questionUrdu;
+            document.getElementById('progress').textContent = currentLang === 'sv' 
+                ? `Part ${currentPart} - Fråga ${currentQuestion + 1} av ${data.length}`
+                : `Part ${currentPart} - Sawal ${currentQuestion + 1} of ${data.length}`;
+            
+            document.getElementById('question').textContent = currentData.question;
+            document.getElementById('questionUrdu').textContent = currentData.questionUrdu;
             
             if (currentLang === 'ur') {
                 document.getElementById('questionUrdu').classList.remove('hidden');
@@ -551,7 +811,7 @@
             }
 
             const optionsDiv = document.getElementById('options');
-            optionsDiv.innerHTML = data.options.map((option, i) => `
+            optionsDiv.innerHTML = currentData.options.map((option, i) => `
                 <label>
                     <input type="radio" name="answer" value="${i}">
                     ${option}
@@ -570,21 +830,22 @@
                 return;
             }
 
+            const data = getCurrentData();
+            const currentData = data[currentQuestion];
             const answer = parseInt(selected.value);
-            const data = quizData[currentQuestion];
             const resultDiv = document.getElementById('result');
             
-            answered[currentQuestion] = (answer === data.correct);
+            answered[currentQuestion] = (answer === currentData.correct);
             
-            if (answer === data.correct) {
+            if (answer === currentData.correct) {
                 score++;
                 resultDiv.className = 'result correct';
                 resultDiv.innerHTML = `
                     <div class="result-title">✓ ${currentLang === 'sv' ? 'Rätt!' : 'Sahi Jawab!'}</div>
                     <div class="explanation">
                         <div class="explanation-title">${currentLang === 'sv' ? 'Förklaring:' : 'Tafseel:'}</div>
-                        <div class="explanation-sv">${data.explanation}</div>
-                        <div class="explanation-ur">${data.explanationUrdu}</div>
+                        <div class="explanation-sv">${currentData.explanation}</div>
+                        <div class="explanation-ur">${currentData.explanationUrdu}</div>
                     </div>
                 `;
             } else {
@@ -593,10 +854,10 @@
                     <div class="result-title">✗ ${currentLang === 'sv' ? 'Fel!' : 'Ghalat Jawab!'}</div>
                     <div class="explanation">
                         <div class="explanation-title">${currentLang === 'sv' ? 'Rätt svar:' : 'Sahi Jawab:'}</div>
-                        <div class="explanation-sv">${data.options[data.correct]}</div>
+                        <div class="explanation-sv">${currentData.options[currentData.correct]}</div>
                         <div class="explanation-title" style="margin-top:10px;">${currentLang === 'sv' ? 'Förklaring:' : 'Tafseel:'}</div>
-                        <div class="explanation-sv">${data.explanation}</div>
-                        <div class="explanation-ur">${data.explanationUrdu}</div>
+                        <div class="explanation-sv">${currentData.explanation}</div>
+                        <div class="explanation-ur">${currentData.explanationUrdu}</div>
                     </div>
                 `;
             }
@@ -608,7 +869,8 @@
         }
 
         function nextQuestion() {
-            if (currentQuestion < quizData.length - 1) {
+            const data = getCurrentData();
+            if (currentQuestion < data.length - 1) {
                 currentQuestion++;
                 document.getElementById('result').classList.add('hidden');
                 document.getElementById('navButtons').classList.add('hidden');
@@ -632,15 +894,19 @@
         }
 
         function showFinalScore() {
+            const data = getCurrentData();
             document.getElementById('result').classList.add('hidden');
             document.getElementById('navButtons').classList.add('hidden');
             document.getElementById('submit').classList.add('hidden');
             document.getElementById('scoreBox').classList.remove('hidden');
-            document.getElementById('scoreNumber').textContent = `${score}/${quizData.length}`;
+            document.getElementById('scoreNumber').textContent = `${score}/${data.length}`;
+            document.getElementById('scoreText').textContent = currentLang === 'sv' 
+                ? 'Rätta svar' 
+                : 'Sahi jawab';
             document.getElementById('options').innerHTML = '';
             document.getElementById('question').textContent = currentLang === 'sv' 
-                ? 'Grattis! Du har klarat quizet!' 
-                : 'Mubarak ho! Aapne quiz complete kar liya!';
+                ? `Grattis! Du har klarat Part ${currentPart}!` 
+                : `Mubarak ho! Aapne Part ${currentPart} complete kar liya!`;
             document.getElementById('questionUrdu').textContent = '';
             document.getElementById('progress').textContent = '';
         }
