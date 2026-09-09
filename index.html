@@ -3,337 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Övningstentamen - Taxi Förarprov (Säkerhet)</title>
+    <title>Taxi License Quiz - Game Mode</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 700px;
+            max-width: 800px;
             margin: 40px auto;
             padding: 20px;
-            background: #f5f5f5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
         .quiz-container {
             background: white;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         h1 {
-            color: #0057b8;
+            color: #667eea;
             text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .lang-toggle {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .lang-btn {
+            padding: 10px 25px;
+            margin: 0 5px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .lang-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        .lang-btn:hover {
+            transform: scale(1.05);
+        }
+        .progress {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #667eea;
+            font-weight: bold;
+        }
+        .question-box {
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            margin-bottom: 25px;
         }
         .question {
-            font-size: 18px;
-            margin-bottom: 20px;
+            font-size: 20px;
             font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .question-urdu {
+            font-size: 18px;
+            color: #555;
+            margin-top: 10px;
+            font-style: italic;
         }
         .options label {
             display: block;
-            margin: 10px 0;
-            padding: 12px;
+            margin: 12px 0;
+            padding: 15px;
             background: #f0f4ff;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             transition: 0.2s;
+            border: 2px solid transparent;
         }
         .options label:hover {
-            background: #d6e4ff;
+            background: #e0e7ff;
+            border-color: #667eea;
         }
         input[type="radio"] {
-            margin-right: 10px;
+            margin-right: 12px;
+            transform: scale(1.2);
         }
-        button {
+        .btn {
             margin-top: 20px;
-            padding: 12px 24px;
-            background: #0057b8;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             width: 100%;
+            font-weight: bold;
+            transition: 0.3s;
         }
-        button:hover {
-            background: #003d8a;
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
         .result {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 10px;
             text-align: center;
         }
-        .correct {
-            color: green;
+        .result.correct {
+            background: #d4edda;
+            border: 2px solid #28a745;
         }
-        .incorrect {
-            color: red;
+        .result.incorrect {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+        }
+        .result-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .result.correct .result-title {
+            color: #28a745;
+        }
+        .result.incorrect .result-title {
+            color: #dc3545;
         }
         .explanation {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
             margin-top: 15px;
+            text-align: left;
+        }
+        .explanation-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .explanation-sv {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .explanation-ur {
+            color: #555;
+            font-style: italic;
+            border-top: 1px dashed #ccc;
+            padding-top: 10px;
+        }
+        .score-box {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .score-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .hidden {
+            display: none;
+        }
+        .question-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        .q-btn {
             padding: 15px;
-            background: #e8f5e9;
-            border-left: 4px solid green;
-            border-radius: 4px;
+            background: #f0f4ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #667eea;
+            transition: 0.3s;
         }
-    </style>
-</head>
-<body>
-    <div class="quiz-container">
-        <h1>Övningstentamen - Taxi Förarprov (Säkerhet)</h1>
-        <div id="quiz"></div>
-        <button id="submit">Visa resultat</button>
-        <div class="result" id="result"></div>
-    </div>
-
-    <script>
-        const quizData = [
-            {
-                question: "Vad är den minsta tillåtna mönsterdjupet för sommardäck i Sverige?",
-                options: ["1.0 mm", "1.6 mm", "2.0 mm", "3.0 mm"],
-                correct: 1,
-                explanation: "I Sverige är det minsta tillåtna mönsterdjupet för sommardäck 1,6 mm."
-            },
-            {
-                question: "Vad är den minsta tillåtna mönsterdjupet för vinterdäck i Sverige?",
-                options: ["1.6 mm", "2.0 mm", "3.0 mm", "4.0 mm"],
-                correct: 2,
-                explanation: "I Sverige är det minsta tillåtna mönsterdjupet för vinterdäck 3,0 mm."
-            },
-            {
-                question: "När ska den gula skyltlampan (skolbuss/skolzon) tändas?",
-                options: [
-                    "När du ser en skolbuss",
-                    "100 meter före och 100 meter efter skolan",
-                    "Endast när barnen korsar vägen",
-                    "Endast på morgonen"
-                ],
-                correct: 1,
-                explanation: "Den gula skyltlampan ska tändas 100 meter före skolan och släckas 100 meter efter."
-            },
-            {
-                question: "Hur kontrollerar du att bilbältet fungerar korrekt?",
-                options: [
-                    "Genom att dra långsamt i det",
-                    "Genom att ge det en snabb ryckning",
-                    "Genom att titta på det",
-                    "Genom att lossa det"
-                ],
-                correct: 1,
-                explanation: "Du kontrollerar bilbältet genom att ge det en snabb ryckning – det ska låsa sig."
-            },
-            {
-                question: "Var ska ett barn under 135 cm sitta i bilen för maximal säkerhet?",
-                options: [
-                    "Fram med airbag på",
-                    "Fram med airbag av",
-                    "Bakåt i baksätet",
-                    "Var som helst"
-                ],
-                correct: 2,
-                explanation: "Barn under 135 cm ska sitta bakåt i baksätet för maximal säkerhet."
-            },
-            {
-                question: "Vad gör du om ett barn måste sitta i framsätet?",
-                options: [
-                    "Inget särskilt",
-                    "Stäng av passagerarairbaggen",
-                    "Sätt på varningsljusen",
-                    "Kör långsammare"
-                ],
-                correct: 1,
-                explanation: "Om ett barn sitter i framsätet måste passagerarairbaggen vara avstängd."
-            },
-            {
-                question: "Vilken typ av bilbarnstol används för barn 0–9 månader?",
-                options: [
-                    "Framåtvänd stol",
-                    "Bakåtvänd babyskydd",
-                    "Bälteskudde",
-                    "Utan stol"
-                ],
-                correct: 1,
-                explanation: "För barn 0–9 månader används bakåtvänd babyskydd."
-            },
-            {
-                question: "När kan ett barn sitta utan bilbarnstol/booster?",
-                options: [
-                    "När barnet är 100 cm",
-                    "När barnet är 120 cm",
-                    "När barnet är 135 cm",
-                    "När barnet är 10 år"
-                ],
-                correct: 2,
-                explanation: "Barn kan sitta utan bilbarnstol/booster när de är 135 cm långa."
-            },
-            {
-                question: "Hur aktiverar du barnlåset på bildörren?",
-                options: [
-                    "Genom att trycka på en knapp",
-                    "Genom att använda nyckel eller reglage på dörrkanten",
-                    "Genom att dra i handtaget",
-                    "Barnlåset aktiveras automatiskt"
-                ],
-                correct: 1,
-                explanation: "Barnlåset aktiveras med nyckel eller reglage på dörrkanten."
-            },
-            {
-                question: "Vad är spolarvätska och varför är den viktig i Sverige?",
-                options: [
-                    "Motorolja",
-                    "Kylarvätska",
-                    "Vindrutetorkarvätska som inte fryser vid låga temperaturer",
-                    "Bromsvätska"
-                ],
-                correct: 2,
-                explanation: "Spolarvätska är vindrutetorkarvätska som ska tåla -18°C eller lägre i Sverige."
-            },
-            {
-                question: "Hur säkrar du bagage i en taxi?",
-                options: [
-                    "Lägger det i bagageutrymmet utan att säkra",
-                    "Använder remmar eller band för att fästa det",
-                    "Ber passageraren hålla det",
-                    "Kör långsammare"
-                ],
-                correct: 1,
-                explanation: "Bagage ska säkras med remmar eller band så att det inte rör sig under körning."
-            },
-            {
-                question: "Vad gör du när examinatorn ber dig kontrollera bromsljusen?",
-                options: [
-                    "Trycker på bromspedalen och sitter kvar",
-                    "Ber examinatorn gå ut och kontrollera, eller går ut själv",
-                    "Ignorerar frågan",
-                    "Säger att de fungerar"
-                ],
-                correct: 1,
-                explanation: "Du måste faktiskt visa att ljusen fungerar genom att låta någon kontrollera dem utifrån."
-            },
-            {
-                question: "Var hittar du bromsvätskebehållaren?",
-                options: [
-                    "I bagageutrymmet",
-                    "Under bilen",
-                    "I motorrummet, vanligtvis nära förarplatsen",
-                    "I handskfacket"
-                ],
-                correct: 2,
-                explanation: "Bromsvätskebehållaren finns i motorrummet, vanligtvis nära förarplatsen."
-            },
-            {
-                question: "Var hittar du motoroljan?",
-                options: [
-                    "I bagageutrymmet",
-                    "I motorrummet, mätstickan och påfyllningslocket",
-                    "Under bilen",
-                    "I handskfacket"
-                ],
-                correct: 1,
-                explanation: "Motoroljan finns i motorrummet – mätstickan visar oljenivån och påfyllningslocket används för att fylla på."
-            },
-            {
-                question: "Var hittar du kylarvätskebehållaren?",
-                options: [
-                    "I bagageutrymmet",
-                    "I motorrummet, ofta en genomskinlig behållare med färgad vätska",
-                    "Under sätet",
-                    "I handskfacket"
-                ],
-                correct: 1,
-                explanation: "Kylarvätskebehållaren finns i motorrummet, ofta en genomskinlig behållare med färgad vätska."
-            },
-            {
-                question: "Var finns bilbatteriet?",
-                options: [
-                    "I bagageutrymmet",
-                    "I motorrummet, vanligtvis nära ena hörnet",
-                    "Under bilen",
-                    "I handskfacket"
-                ],
-                correct: 1,
-                explanation: "Bilbatteriet finns vanligtvis i motorrummet, nära ena hörnet."
-            },
-            {
-                question: "Hur många frågor finns på säkerhetsteoriprovet för taxi?",
-                options: ["30 frågor", "40 frågor", "50 frågor", "60 frågor"],
-                correct: 2,
-                explanation: "Säkerhetsteoriprovet för taxi har 50 frågor och du måste svara rätt på minst 45."
-            },
-            {
-                question: "Hur många frågor måste du svara rätt på för att godkännas på säkerhetsteoriprovet?",
-                options: ["40 av 50", "42 av 50", "45 av 50", "48 av 50"],
-                correct: 2,
-                explanation: "Du måste svara rätt på minst 45 av 50 frågor för att godkännas."
-            },
-            {
-                question: "Hur länge är dina godkända teoriprov giltiga?",
-                options: ["1 år", "2 år", "3 år", "5 år"],
-                correct: 2,
-                explanation: "Godkända teoriprov är giltiga i 3 år. Inom denna tid måste du klara körprovet."
-            },
-            {
-                question: "Inom hur lång tid måste du klara båda teoriproven?",
-                options: ["3 månader", "6 månader", "1 år", "2 år"],
-                correct: 1,
-                explanation: "Du måste klara båda teoriproven (säkerhet och lagar/kartläsning) inom 6 månader."
-            }
-        ];
-
-        const quiz = document.getElementById('quiz');
-        const submitBtn = document.getElementById('submit');
-        const resultDiv = document.getElementById('result');
-
-        function loadQuiz() {
-            let output = '';
-            quizData.forEach((data, index) => {
-                output += `
-                    <div class="question">${index + 1}. ${data.question}</div>
-                    <div class="options">
-                        ${data.options.map((option, i) => `
-                            <label>
-                                <input type="radio" name="question${index}" value="${i}">
-                                ${option}
-                            </label>
-                        `).join('')}
-                    </div>
-                `;
-            });
-            quiz.innerHTML = output;
+        .q-btn:hover {
+            background: #667eea;
+            color: white;
         }
-
-        submitBtn.addEventListener('click', () => {
-            let score = 0;
-            let resultHTML = '';
-
-            quizData.forEach((data, index) => {
-                const selected = document.querySelector(`input[name="question${index}"]:checked`);
-                const answer = selected ? parseInt(selected.value) : null;
-
-                resultHTML += `<div style="margin-top:20px; padding:15px; background:#fafafa; border-radius:6px;">`;
-                resultHTML += `<strong>Fråga ${index + 1}:</strong> ${data.question}<br><br>`;
-
-                if (answer === data.correct) {
-                    score++;
-                    resultHTML += `<span class="correct">✓ Rätt!</span><br>`;
-                } else {
-                    resultHTML += `<span class="incorrect">✗ Fel. Rätt svar: ${data.options[data.correct]}</span><br>`;
-                }
-                resultHTML += `<div class="explanation">${data.explanation}</div>`;
-                resultHTML += `</div>`;
-            });
-
-            resultDiv.innerHTML = `
-                <div style="font-size:22px; margin-bottom:20px;">
-                    Du fick <span class="${score >= quizData.length * 0.9 ? 'correct' : 'incorrect'}">${score}</span> av ${quizData.length} rätt.
-                </div>
-                ${resultHTML}
-            `;
-
-            submitBtn.textContent = 'Försök igen';
-            submitBtn.onclick = () => location.reload();
-        });
-
-        loadQuiz();
-    </script>
-</body>
-</html>
+        .q-btn.answered-correct {
+            background: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+        .q-btn.answered-wrong {
+            background: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+        .q-btn.current {
+            background: #667eea;
+            color: white;
+            transf
